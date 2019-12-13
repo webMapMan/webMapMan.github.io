@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/filter.css">
+        <link rel="stylesheet" href="css/nouislider.min.css">
+
+        <style type="text/css">
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        .leaflet-control-search .search-button{margin-top:1px; position: absolute; left: 186px; top: -79px;}
+        .leaflet-control-search .search-input{position: absolute; width: 120px; left: 45px; top: -79px;}
+        .col3, .col9 {height:100%;}
+        .col9 {width:80%;}
+        #sel_USER_POS option::before {content: "🔲 ";display: inline-block; margin-left: 2px;}
+        #sel_USER_POS option:checked::before {content: "✔️ "}
+        #sel_USER_POS{overflow: auto; background-color:#C8C8C8; border: 1px solid #cccbcb}
+        #sel_USER_POS option{padding: 4px 0 2px 4px; cursor: pointer;}
+        .reset{cursor: pointer; text-decoration: underline; color:#777 !important;}
+        .leaflet-control-search .search-tooltip{top: -59px !important; left: 45px;}
+        .leaflet-control-search .search-tip{margin:1px !important; border-radius: 0 !important; width: 110px;}
+        .col3{background-color: #BFBFBF;}
+
+        @media screen and (max-width: 600px) {
+            .col3 {display: none;}
+            .col9 {width:100%;}
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="js/tailDT.js"></script>
+        <script src="js/nouislider.min.js"></script>
+        <script src="js/wNumb.js"></script>
+        <script src="data/countries_5.js"></script>
+        <script src="data/SPECIALIST_1.js"></script>
+        <script src="data/DEFENSE_2.js"></script>
+        <script src="data/OFFENSE_3.js"></script>
+        <script src="data/ALLRECRUITS_4.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:15, minZoom:2
+        }).fitBounds([[-2.762295163316601,-139.95370436953417],[61.879697153427,-50.74742086903572]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        var layer_CartoDbDarkMatter_0 = L.tileLayer('http://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+            opacity: 0.95,
+            attribution: '',
+            minZoom: 2,
+            maxZoom: 15,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_CartoDbDarkMatter_0;
+        map.addLayer(layer_CartoDbDarkMatter_0);
+
+        function style_countries_5_0() {
+            return {
+                pane: 'pane_countries_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,0,0,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_countries_5');
+        map.getPane('pane_countries_5').style.zIndex = 405;
+        map.getPane('pane_countries_5').style['mix-blend-mode'] = 'normal';
+        var layer_countries_5 = new L.geoJson(json_countries_5, {
+            attribution: '',
+            dataVar: 'json_countries_5',
+            layerName: 'layer_countries_5',
+            pane: 'pane_countries_5',
+            style: style_countries_5_0,
+        });
+        bounds_group.addLayer(layer_countries_5);
+        map.addLayer(layer_countries_5);
+
+        function pop_SPECIALIST_1(feature, layer) {
+          var popupContent = '<b>'+(feature.properties['USER_name'] !== null ? Autolinker.link(String(feature.properties['USER_name'])) : '') + ' | '
+          + (feature.properties['USER_POS'] !== null ? Autolinker.link(String(feature.properties['USER_POS'])) : '') + '</b><br/><i>'
+          + (feature.properties['USER_HS'] !== null ? Autolinker.link(String(feature.properties['USER_HS'])) : '') + '</i><br/>'
+          + (feature.properties['USER_PHONE'] !== null ? Autolinker.link(String(feature.properties['USER_PHONE'])) : '') + '<br/>'
+          + (feature.properties['USER_Twitt'] !== null ? Autolinker.link(String(feature.properties['USER_Twitt'])) : '') + '<br/><br/> RC: '
+          + (feature.properties['USER_RC'] !== null ? Autolinker.link(String(feature.properties['USER_RC'])) : '');
+          layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_SPECIALIST_1_0() {
+            return {
+                pane: 'pane_SPECIALIST_1',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'https://github.com/webMapMan/webMapMan.github.io/blob/master/images/marker-icon-2x-violet.png?raw=true?raw=true',
+            iconSize: [12, 20]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_SPECIALIST_1');
+        map.getPane('pane_SPECIALIST_1').style.zIndex = 401;
+        map.getPane('pane_SPECIALIST_1').style['mix-blend-mode'] = 'normal';
+        var layer_SPECIALIST_1 = new L.geoJson(json_SPECIALIST_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_SPECIALIST_1',
+            layerName: 'layer_SPECIALIST_1',
+            pane: 'pane_SPECIALIST_1',
+            onEachFeature: pop_SPECIALIST_1,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_SPECIALIST_1_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_SPECIALIST_1);
+        map.addLayer(layer_SPECIALIST_1);
+        function pop_DEFENSE_2(feature, layer) {
+          var popupContent = '<b>'+(feature.properties['USER_name'] !== null ? Autolinker.link(String(feature.properties['USER_name'])) : '') + ' | '
+          + (feature.properties['USER_POS'] !== null ? Autolinker.link(String(feature.properties['USER_POS'])) : '') + '</b><br/><i>'
+          + (feature.properties['USER_HS'] !== null ? Autolinker.link(String(feature.properties['USER_HS'])) : '') + '</i><br/>'
+          + (feature.properties['USER_PHONE'] !== null ? Autolinker.link(String(feature.properties['USER_PHONE'])) : '') + '<br/>'
+          + (feature.properties['USER_Twitt'] !== null ? Autolinker.link(String(feature.properties['USER_Twitt'])) : '') + '<br/><br/> RC: '
+          + (feature.properties['USER_RC'] !== null ? Autolinker.link(String(feature.properties['USER_RC'])) : '');
+          layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_DEFENSE_2_0() {
+            return {
+                pane: 'pane_DEFENSE_2',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'https://github.com/webMapMan/webMapMan.github.io/blob/master/images/marker-icon-2x-red.png?raw=true',
+            iconSize: [12, 20]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_DEFENSE_2');
+        map.getPane('pane_DEFENSE_2').style.zIndex = 402;
+        map.getPane('pane_DEFENSE_2').style['mix-blend-mode'] = 'normal';
+        var layer_DEFENSE_2 = new L.geoJson(json_DEFENSE_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_DEFENSE_2',
+            layerName: 'layer_DEFENSE_2',
+            pane: 'pane_DEFENSE_2',
+            onEachFeature: pop_DEFENSE_2,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_DEFENSE_2_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_DEFENSE_2);
+        map.addLayer(layer_DEFENSE_2);
+        function pop_OFFENSE_3(feature, layer) {
+          var popupContent = '<b>'+(feature.properties['USER_name'] !== null ? Autolinker.link(String(feature.properties['USER_name'])) : '') + ' | '
+          + (feature.properties['USER_POS'] !== null ? Autolinker.link(String(feature.properties['USER_POS'])) : '') + '</b><br/><i>'
+          + (feature.properties['USER_HS'] !== null ? Autolinker.link(String(feature.properties['USER_HS'])) : '') + '</i><br/>'
+          + (feature.properties['USER_PHONE'] !== null ? Autolinker.link(String(feature.properties['USER_PHONE'])) : '') + '<br/>'
+          + (feature.properties['USER_Twitt'] !== null ? Autolinker.link(String(feature.properties['USER_Twitt'])) : '') + '<br/><br/> RC: '
+          + (feature.properties['USER_RC'] !== null ? Autolinker.link(String(feature.properties['USER_RC'])) : '');
+          layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_OFFENSE_3_0() {
+            return {
+                pane: 'pane_OFFENSE_3',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'https://github.com/webMapMan/webMapMan.github.io/blob/master/images/marker-icon-2x-green.png?raw=true',
+            iconSize: [12, 20]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_OFFENSE_3');
+        map.getPane('pane_OFFENSE_3').style.zIndex = 403;
+        map.getPane('pane_OFFENSE_3').style['mix-blend-mode'] = 'normal';
+        var layer_OFFENSE_3 = new L.geoJson(json_OFFENSE_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_OFFENSE_3',
+            layerName: 'layer_OFFENSE_3',
+            pane: 'pane_OFFENSE_3',
+            onEachFeature: pop_OFFENSE_3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_OFFENSE_3_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_OFFENSE_3);
+        map.addLayer(layer_OFFENSE_3);
+        function pop_ALLRECRUITS_4(feature, layer) {
+            var popupContent = '<b>'+(feature.properties['USER_name'] !== null ? Autolinker.link(String(feature.properties['USER_name'])) : '') + ' | '
+            + (feature.properties['USER_POS'] !== null ? Autolinker.link(String(feature.properties['USER_POS'])) : '') + '</b><br/><i>'
+            + (feature.properties['USER_HS'] !== null ? Autolinker.link(String(feature.properties['USER_HS'])) : '') + '</i><br/>'
+            + (feature.properties['USER_PHONE'] !== null ? Autolinker.link(String(feature.properties['USER_PHONE'])) : '') + '<br/>'
+            + (feature.properties['USER_Twitt'] !== null ? Autolinker.link(String(feature.properties['USER_Twitt'])) : '') + '<br/><br/> RC: '
+            + (feature.properties['USER_RC'] !== null ? Autolinker.link(String(feature.properties['USER_RC'])) : '');
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_ALLRECRUITS_4_0() {
+            return {
+                pane: 'pane_ALLRECRUITS_4',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'https://github.com/webMapMan/webMapMan.github.io/blob/master/images/marker-icon-2x-blue.png?raw=true',
+            iconSize: [12, 20]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_ALLRECRUITS_4');
+        map.getPane('pane_ALLRECRUITS_4').style.zIndex = 404;
+        map.getPane('pane_ALLRECRUITS_4').style['mix-blend-mode'] = 'normal';
+        var layer_ALLRECRUITS_4 = new L.geoJson(json_ALLRECRUITS_4, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_ALLRECRUITS_4',
+            layerName: 'layer_ALLRECRUITS_4',
+            pane: 'pane_ALLRECRUITS_4',
+            onEachFeature: pop_ALLRECRUITS_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_ALLRECRUITS_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_ALLRECRUITS_4);
+        map.addLayer(layer_ALLRECRUITS_4);
+
+
+        var baseMaps = {};
+
+        L.control.layers(baseMaps, {'<img src="https://github.com/webMapMan/webMapMan.github.io/blob/master/images/marker-icon-2x-blue.png?raw=true" width="8px" /> ALL RECRUITS': layer_ALLRECRUITS_4,'<img src="https://github.com/webMapMan/webMapMan.github.io/blob/master/images/marker-icon-2x-green.png?raw=true" width="8px" /> OFFENSE': layer_OFFENSE_3,'<img src="https://github.com/webMapMan/webMapMan.github.io/blob/master/images/marker-icon-2x-red.png?raw=true" width="8px"/> DEFENSE': layer_DEFENSE_2,
+        '<img src="https://github.com/webMapMan/webMapMan.github.io/blob/master/images/marker-icon-2x-violet.png?raw=true" width="8px" /> SPECIALIST': layer_SPECIALIST_1,},{collapsed:false}).addTo(map);
+        setBounds();
+        map.addControl(new L.Control.Search({
+            layer: layer_ALLRECRUITS_4,
+            initial: false,
+            hideMarkerOnCollapse: false,
+            collapsed: false,
+            zoom: 7,
+            propertyName: 'USER_name'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        //col1.style.height = "99%";
+        //col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        //col2.style.height = "99%";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"USER_POS": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + key).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + key).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + key).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_USER_POS = document.createElement('div');
+            div_USER_POS.id = "div_USER_POS";
+            div_USER_POS.className= "filterselect";
+            document.getElementById("menu").appendChild(div_USER_POS);
+            sel_USER_POS = document.createElement('select');
+            sel_USER_POS.multiple = true;
+            sel_USER_POS.size = 24;
+            sel_USER_POS.id = "sel_USER_POS";
+            var USER_POS_options_str = "<option value='' unselected hidden></option>";
+            sel_USER_POS.onchange = function(){filterFunc()};
+            USER_POS_options_str  += '<option value="A-BACK" selected>A-BACK</option>';
+            USER_POS_options_str  += '<option value="AB" selected>AB</option>';
+            USER_POS_options_str  += '<option value="AB CB" selected>AB CB</option>';
+            USER_POS_options_str  += '<option value="B-BACK" selected>B-BACK</option>';
+            USER_POS_options_str  += '<option value="BB" selected>BB</option>';
+            USER_POS_options_str  += '<option value="CB" selected>CB</option>';
+            USER_POS_options_str  += '<option value="DE" selected>DE</option>';
+            USER_POS_options_str  += '<option value="DT" selected>DT</option>';
+            USER_POS_options_str  += '<option value="ILB" selected>ILB</option>';
+            USER_POS_options_str  += '<option value="K" selected>K</option>';
+            USER_POS_options_str  += '<option value="LS" selected>LS</option>';
+            USER_POS_options_str  += '<option value="NG" selected>NG</option>';
+            USER_POS_options_str  += '<option value="NT" selected>NT</option>';
+            USER_POS_options_str  += '<option value="OC" selected>OC</option>';
+            USER_POS_options_str  += '<option value="OG" selected>OG</option>';
+            USER_POS_options_str  += '<option value="OL" selected>OL</option>';
+            USER_POS_options_str  += '<option value="OLB" selected>OLB</option>';
+            USER_POS_options_str  += '<option value="OT" selected>OT</option>';
+            USER_POS_options_str  += '<option value="P" selected>P</option>';
+            USER_POS_options_str  += '<option value="QB" selected>QB</option>';
+            USER_POS_options_str  += '<option value="SAF" selected>SAF</option>';
+            USER_POS_options_str  += '<option value="TE" selected>TE</option>';
+            USER_POS_options_str  += '<option value="WR" selected>WR</option>';
+            USER_POS_options_str  += '<option value="WR DB" selected>WR DB</option>';
+            sel_USER_POS.innerHTML = USER_POS_options_str;
+            div_USER_POS.appendChild(sel_USER_POS);
+            var lab_USER_POS = document.createElement('div');
+            lab_USER_POS.innerHTML = 'POSITIONS';
+            lab_USER_POS.className = 'filterlabel';
+            div_USER_POS.appendChild(lab_USER_POS);
+            var reset_USER_POS = document.createElement('div');
+            reset_USER_POS.innerHTML = 'RESET ALL';
+            reset_USER_POS.className = 'filterlabel reset';
+            reset_USER_POS.onclick = function() {
+                var options = document.getElementById("sel_USER_POS").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_USER_POS.appendChild(reset_USER_POS);
+        </script>
+    </body>
+</html>
